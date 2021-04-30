@@ -13,8 +13,9 @@ app.use(express.static('./public'));
 
 
 app.get("/", (req, res) => {
+    res.render('form');
     console.log("Responding to root route");
-    res.send("Hello from Root")
+    res.sendFile("form.html");
 });
 
 app.get("/users", (req, res) => {
@@ -222,7 +223,7 @@ return filt
 
 
 //Pulling Court Date Request from HTML
-app.post('/form.html', async (req, res) => {
+app.post('/', async (req, res) => {
     console.log("Trying to pull date info");
     const dateSelect = new Date(req.body.searchDate);
     const locations = [
