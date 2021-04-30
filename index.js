@@ -222,7 +222,7 @@ return filt
 
 
 //Pulling Court Date Request from HTML
-app.post('/index.html', async (req, res) => {
+app.post('index.html', async (req, res) => {
     console.log("Trying to pull date info");
     const dateSelect = new Date(req.body.searchDate);
     const locations = [
