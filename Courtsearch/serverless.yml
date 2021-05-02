@@ -4,6 +4,9 @@ provider:
   name: aws
   runtime: nodejs14.x
   lambdaHashingVersion: 20201221
+  memorySize: 256
+  timeout: 15
+  logRetentionInDays: 3
 
 functions:
   courtsearch:

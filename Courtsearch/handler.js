@@ -1,8 +1,4 @@
 const puppeteer = require("puppeteer-core");
-// const express = require ('express');
-// const asyncHandler = require('express-async-handler');
-// const mysql = require('mysql');
-// const bodyParser = require('body-parser');
 
 'use strict';
 
@@ -10,7 +6,7 @@ async function scrapeData(location, date, browser) {
 
   //Converting Date Request to usable Values
   const month = date.getMonth() + 1;
-  const day = date.getDate() + 1;
+  const day = date.getDate();
   const year = date.getFullYear();
 
   console.log(month, day, year);  
@@ -20,8 +16,7 @@ async function scrapeData(location, date, browser) {
   console.log("SCRAPE0")
 
   const page = await browser.newPage();
-  const textToFind = 'MANITOBA PUBLIC INSURANCE';
-  const altTextToFind = 'MPI';
+  const textToFind = ['MANITOBA PUBLIC INSURANCE', 'MPI'];
   const hearingDate = JSON.stringify(day);
   const hearingMonth = JSON.stringify(month);
   const hearingYear = JSON.stringify(year);
@@ -45,8 +40,6 @@ async function scrapeData(location, date, browser) {
     console.log("Whoops", err);
     await browser.close();
   }
-
-  console.log("After year click")
   // Date entered
 
   console.log("SCRAPE1 for " + location)
@@ -58,116 +51,31 @@ async function scrapeData(location, date, browser) {
   console.log("SCRAPE2")
   // Assembling Data into Array
   const pullData = await page.evaluate(() => {
-    const regData = Array.from(document.querySelectorAll('#searchResults > table tr td'))
-    return regData.map(td => td.innerText)
+    const headers = [];
+    $('#searchResults th').each(function(index, item) {
+      headers[index] = $(item).text().trim();
+    });
+    const array = [];
+    $('#searchResults tr').has('td').each(function () {
+      var arrayItem = {};
+      $('td', $(this)).each(function (index, item) {
+          arrayItem[headers[index]] = $(item).text().trim();
+      });
+      array.push(arrayItem);
+    });
+    return array;
   });
-  console.log("SCRAPE3 for " + location)
-  console.log(pullData[0])
-  // Filtering Array for MPI Values - Inserting Values into Array of Objects
-  let datesMPI = [];
-
-  var count = 0;
-  for (var i = 0; i < pullData.length; ++i) {
-
-    // PUSH MPI into array of objects
-    if (pullData[i].includes(textToFind)) {
-      console.log(pullData[i]);
-      let newDate = {
-        "party": pullData[i],
-        "file_no": pullData[i + 2],
-        "date": pullData[i + 3],
-        "time": pullData[i + 4],
-        "details": pullData[i + 5]
-      }
-      datesMPI.push(newDate)
-    } else if (pullData[i].includes(altTextToFind)) {
-      let newDate = {
-        "party": pullData[i],
-        "file_no": pullData[i + 2],
-        "date": pullData[i + 3],
-        "time": pullData[i + 4],
-        "details": pullData[i + 5]
-      }
-      datesMPI.push(newDate)
-    }
-  }
-  //PUSH related matters to corresponding objects
-  let allrelDates = [];
-  for (var i = 0; i < pullData.length; ++i) {
-    for (var j = 0; j < datesMPI.length; ++j) {
-
-      if (pullData[i] == datesMPI[j].file_no && !pullData[i - 2].includes(textToFind)) {
-
-        let newDate = {
-          "party": pullData[i - 2],
-          "file_no": pullData[i + 0],
-          "date": pullData[i + 1],
-          "time": pullData[i + 2],
-          "details": pullData[i + 3]
-        }
-        allrelDates.push(newDate)
-      }
-    }
-  }
-  console.table(allrelDates)
-
-  const filt = allrelDates.reduce((acc, current) => {
-    const x = acc.find(item => item.file_no === current.file_no);
-    if (!x) {
-
-      current.party = [current.party]
-      acc.push(current);
-
-    } else {
-      x.party.push(current.party)
-
-    }
-    return acc;
-  }, []);
-
-  console.table(filt)
-  return filt
-}
-
-function buildTable(datesMPI) {
-  console.log(datesMPI);
-
-  //Results Page Return Button
-
-  let result = '<table class="table table-striped">';
-
-  //Constructing Results in HTML Table
-
-  result += '<tr class="bg-info"><th>Party</th><th>File No.</th><th>Date</th><th>Time</th><th>Details</th></tr>'
-  if (datesMPI.length === 0) {
-    result += '<tr><td>No Hearings Scheduled</td></tr></table>'
-    return result
-  } else {
-    for (var i = 0; i < datesMPI.length; i++) {
-      var row = `<tr>
-                  <td>${datesMPI[i].party}</td>
-                  <td><a href="https://web43.gov.mb.ca/Registry/FileNumberSearch/SearchResults?FileNumber=${datesMPI[i].file_no}" target="_blank">${datesMPI[i].file_no}</a></td>
-                  <td>${datesMPI[i].date}</td>
-                  <td>${datesMPI[i].time}</td>
-                  <td>${datesMPI[i].details}</td>
-             </tr>`
-      result += row
-    };
-    result += '</table></body>';
-    //Table Constructed
-
-    console.log(result);
-
-    return result
-  }
+  console.log(pullData);
+  const filtered = pullData.filter(hearing => textToFind.some(mpi => hearing["Party Name"].includes(mpi)));
+  console.log(filtered);
+  return filtered;
 }
 
 module.exports.courtsearch = async (event) => {
+  const dataArray = [];
   console.log(event);
   console.log("Trying to pull date info");
-  console.log("Buffer", Buffer.from(event.body, 'base64').toString('utf-8'));
-  const stringifiedBody = Buffer.from(event.body, 'base64').toString('utf-8');
-  const searchDate = stringifiedBody.split("=")[1];
+  const { searchDate } = JSON.parse(event.body);
     const dateSelect = new Date(searchDate);
     const locations = [
         {
@@ -195,24 +103,33 @@ module.exports.courtsearch = async (event) => {
         //     location: 'Minnedosa'
         // }
     ]
-  const browser = await puppeteer.connect({ browserWSEndpoint: "http://EC2Co-EcsEl-1A76G3YJGEK6J-1147292357.us-east-1.elb.amazonaws.com:3000" });
-  let finalTable = '<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"><style>body{background: skyblue; font-family: verdana; color: #fff; padding: 30px;}</style><h1>COURT DATES</h1>'
-  finalTable += '<body><form method ="get" action="/form.html"><label><button>Select New Date</button></label></form>'
-  // let datesMPI = await scrapeData(locations[0], dateSelect)
-  // console.log("This is result of scrapeData" + datesMPI)
+  const browser = await puppeteer.connect({ browserWSEndpoint: "http://EC2Co-EcsEl-1A76G3YJGEK6J-1147292357.us-east-1.elb.amazonaws.com:3000" }).catch(err => console.error("Failed to connect to Browserless!", err));
   for (var i = 0; i < locations.length; i++){
     const data = await scrapeData(locations[i].courtid, dateSelect, browser);
-    finalTable += `<h2>${locations[i].location}</h2><br>`;
-    const table = buildTable(data);
-    finalTable += table;
+    if (!data || !data.length) console.log("No hearings available at this location!");
+    for (hearing of data) {
+      console.log("Push hearing",hearing, "for location", locations[i].location);
+      dataArray.push({
+        location: locations[i].location,
+        party: hearing["Party Name"],
+        file: {
+          name: hearing["File #"],
+          url: `https://web43.gov.mb.ca/Registry/FileNumberSearch/SearchResults?FileNumber=${hearing["File #"]}`
+        },
+        date: hearing["Court Date"],
+        time: hearing["Court Time"],
+        details: hearing["Hearing Type"],
+      });
+    }
   }
-
-  console.log(finalTable);
 
   await browser.close();
   
   return {
     statusCode: 200,
-    body: finalTable,
+    headers: {
+      "Access-Control-Allow-Origin" : "*",
+    },
+    body: JSON.stringify(dataArray),
   }
 };
