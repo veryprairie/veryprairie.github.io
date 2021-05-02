@@ -4,8 +4,8 @@ provider:
   name: aws
   runtime: nodejs14.x
   lambdaHashingVersion: 20201221
-  memorySize: 256
-  timeout: 15
+  memorySize: 128
+  timeout: 10
   logRetentionInDays: 3
 
 functions:
@@ -16,3 +16,7 @@ functions:
           path: /search
           method: post
           cors: true
+
+package:
+  exclude:
+    - .git/*
