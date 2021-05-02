@@ -155,6 +155,14 @@ export default {
     items: [],
     // returning dates already picked
     arrayEvents: [],
+    mounted () {
+      this.arrayEvents = [...Array(6)].map(() => {
+        const day = Math.floor(Math.random() * 30)
+        const d = new Date()
+        d.setDate(day)
+        return d.toISOString().substr(0, 10)
+      })
+    },
     // boolean to toggle loading state
     loading: false,
     // search field for results table
