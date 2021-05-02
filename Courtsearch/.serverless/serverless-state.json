@@ -8,8 +8,8 @@
       "name": "aws",
       "runtime": "nodejs14.x",
       "lambdaHashingVersion": "20201221",
-      "memorySize": 256,
-      "timeout": 15,
+      "memorySize": 128,
+      "timeout": 10,
       "logRetentionInDays": 3,
       "stage": "dev",
       "variableSyntax": "\\${([^{}:]+?(?:\\(|:)(?:[^:{}][^{}]*?)?)}",
@@ -179,13 +179,13 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/courtsearch/dev/1619896259504-2021-05-01T19:10:59.504Z/courtsearch.zip"
+                "S3Key": "serverless/courtsearch/dev/1619971891956-2021-05-02T16:11:31.956Z/courtsearch.zip"
               },
               "Handler": "handler.courtsearch",
               "Runtime": "nodejs14.x",
               "FunctionName": "courtsearch-dev-courtsearch",
-              "MemorySize": 256,
-              "Timeout": 15,
+              "MemorySize": 128,
+              "Timeout": 10,
               "Role": {
                 "Fn::GetAtt": [
                   "IamRoleLambdaExecution",
@@ -197,14 +197,14 @@
               "CourtsearchLogGroup"
             ]
           },
-          "CourtsearchLambdaVersionWuF3fIucSANeBLFm8NnQGRmw0ZBMI2WXHogPKGVSw": {
+          "CourtsearchLambdaVersionpUipr6YMfhAi2vdQLCprEfTAAIr1rtkklg06VKWc": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "CourtsearchLambdaFunction"
               },
-              "CodeSha256": "d9o4RLr37K2vv4npEp0UdxoUB+vUrQbYxYG5GDtcBdc="
+              "CodeSha256": "Ht6thl/J5/QcDNY1SxGW66+CadrrESKI8Wg/AR8DMsw="
             }
           },
           "ApiGatewayRestApi": {
@@ -322,7 +322,7 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1619896256985": {
+          "ApiGatewayDeployment1619971887185": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -385,7 +385,7 @@
           "CourtsearchLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "CourtsearchLambdaVersionWuF3fIucSANeBLFm8NnQGRmw0ZBMI2WXHogPKGVSw"
+              "Ref": "CourtsearchLambdaVersionpUipr6YMfhAi2vdQLCprEfTAAIr1rtkklg06VKWc"
             },
             "Export": {
               "Name": "sls-courtsearch-dev-CourtsearchLambdaFunctionQualifiedArn"
@@ -537,11 +537,11 @@
         ],
         "name": "courtsearch-dev-courtsearch",
         "package": {},
-        "memory": 256,
-        "timeout": 15,
+        "memory": 128,
+        "timeout": 10,
         "runtime": "nodejs14.x",
         "vpc": {},
-        "versionLogicalId": "CourtsearchLambdaVersionWuF3fIucSANeBLFm8NnQGRmw0ZBMI2WXHogPKGVSw"
+        "versionLogicalId": "CourtsearchLambdaVersionpUipr6YMfhAi2vdQLCprEfTAAIr1rtkklg06VKWc"
       }
     },
     "configValidationMode": "warn",
@@ -556,13 +556,20 @@
       },
       "functions": {
         "$ref": "$[\"service\"][\"functions\"]"
+      },
+      "package": {
+        "exclude": [
+          ".git/*"
+        ],
+        "artifact": "C:\\Users\\Dan\\Documents\\GitHub\\veryprairie.github.io\\Courtsearch\\.serverless\\courtsearch.zip",
+        "artifactDirectoryName": "serverless/courtsearch/dev/1619971891956-2021-05-02T16:11:31.956Z"
       }
     },
     "isDashboardMonitoringPreconfigured": false,
-    "artifact": "/Users/acies/Castellan/Repos/veryprairie.github.io/Courtsearch/.serverless/courtsearch.zip"
+    "artifact": "C:\\Users\\Dan\\Documents\\GitHub\\veryprairie.github.io\\Courtsearch\\.serverless\\courtsearch.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/courtsearch/dev/1619896259504-2021-05-01T19:10:59.504Z",
+    "artifactDirectoryName": "serverless/courtsearch/dev/1619971891956-2021-05-02T16:11:31.956Z",
     "artifact": "courtsearch.zip"
   }
 }

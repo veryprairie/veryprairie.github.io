@@ -8,6 +8,9 @@ provider:
   timeout: 10
   logRetentionInDays: 3
 
+plugins:
+  - serverless-offline
+
 functions:
   courtsearch:
     handler: handler.courtsearch

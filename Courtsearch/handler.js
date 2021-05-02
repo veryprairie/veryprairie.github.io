@@ -12,7 +12,7 @@ module.exports.courtsearch = async (event) => {
   const { searchDate } = JSON.parse(event.body);
   const date = new Date(searchDate);
   const month = date.getMonth() + 1;
-  const day = date.getDate();
+  const day = date.getDate() + 1;
   const year = date.getFullYear();
 
   console.log(month, day, year);
@@ -51,11 +51,13 @@ module.exports.courtsearch = async (event) => {
       const request = axios.get(`https://web43.gov.mb.ca/Registry/DailyCourtHearing/SearchResults?HearingTypeCode=all&LocationCode=${location.courtid}++&SortOrder=H&Day=${hearingDate}&Month=${hearingMonth}&Year=${hearingYear}&X-Requested-With=XMLHttpRequest`);
       requestArray.push(request)
   }
+  
 
   await axios.all(requestArray).then(axios.spread((...responses) => {
     for (const response of responses) {
         const { data, config: { url } } = response;
         const allData = Tabletojson.convert(data).flat();
+        console.log(allData);
         const filtered = allData.filter(hearing => textToFind.some(mpi => hearing["Party Name"].includes(mpi)));
         const location = querystring.parse(url).LocationCode.trim();
         const locationName = locations.find(by => by.courtid === location).location;

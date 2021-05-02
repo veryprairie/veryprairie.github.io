@@ -4,7 +4,7 @@
       app
       color="primary"
     >
-      <div class="d-flex align-center">
+      <!-- <div class="d-flex align-center">
         <v-img
           alt="MPI Logo"
           contain
@@ -13,7 +13,7 @@
           transition="scale-transition"
           max-width="500"
         />
-      </div>
+      </div> -->
       <v-spacer></v-spacer>
 
     <div>
@@ -43,6 +43,8 @@
               <v-row justify="center">
               <v-date-picker
                   v-model="picker"
+                  :events="arrayEvents"
+                  event-color="green lighten-1"
                   @click:date="chosenOne"
                   :disabled="loading"
                   show-adjacent-months
@@ -115,12 +117,13 @@ export default {
     },
     async chosenOne() {
       // clear any results from a previous run
-      this.items.length = 0;
+      // this.items.length = 0;
       // set loading state so that we can't issue further requests
       this.loading=true;
       // pass the datepicker value to our API and return the data property
       const searching = (await request({
-        url: "https://api.castellan.ai/search",
+        // url: "http://localhost:3000/dev/search",
+        url: "https://api.courtsearch.website/search",
         method: 'POST',
         data: {
           searchDate: this.picker,
@@ -150,6 +153,8 @@ export default {
     ],
     // instantiate array to push items to
     items: [],
+    // returning dates already picked
+    arrayEvents: [],
     // boolean to toggle loading state
     loading: false,
     // search field for results table
