@@ -10,6 +10,8 @@ module.exports.courtsearch = async (event) => {
   console.log(event);
   console.log("Trying to pull date info");
   const { searchDate } = JSON.parse(event.body);
+  
+  // Date selector will require array of dates and Date Array handling
   const date = new Date(searchDate);
   const month = date.getMonth() + 1;
   const day = date.getDate() + 1;
@@ -57,19 +59,50 @@ module.exports.courtsearch = async (event) => {
     for (const response of responses) {
         const { data, config: { url } } = response;
         const allData = Tabletojson.convert(data).flat();
-        console.log(allData);
+
+
+        // console.log('allData:', allData);
+
         const filtered = allData.filter(hearing => textToFind.some(mpi => hearing["Party Name"].includes(mpi)));
+
+  
+        // const fileNo = filteredMPI[0][3];
+        // console.log('File No:', fileNo, 'Filtered', filteredMPI);
+        // const filtered = allData.filter(hearing => hearing["File #"].includes(fileNo));
+      
+
+        console.log('filtered:', filtered);
+
+
+
+
         const location = querystring.parse(url).LocationCode.trim();
         const locationName = locations.find(by => by.courtid === location).location;
+
+   // REPLACE MPI WITH OPPOSING PARTY NAME
+
+
+
+
+
+
         resultArray.push({ 
             filtered,
             locationName,
         });
+      
+      
       }
+
+    
+      
     })).catch(err => {
       console.error(err);
     });
 
+ 
+
+// Loop through each of the Locations - For each hearing, we're gonna push to the dataArray
     for (const location of resultArray) {
       const { filtered, locationName } = location;
       console.log("Push hearings for location", locationName);

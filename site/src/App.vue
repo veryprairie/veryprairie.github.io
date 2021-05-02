@@ -122,8 +122,8 @@ export default {
       this.loading=true;
       // pass the datepicker value to our API and return the data property
       const searching = (await request({
-        // url: "http://localhost:3000/dev/search",
-        url: "https://api.courtsearch.website/search",
+        url: "http://localhost:3000/dev/search",
+        // url: "https://api.courtsearch.website/search",
         method: 'POST',
         data: {
           searchDate: this.picker,
@@ -133,6 +133,7 @@ export default {
       for (const hearing of searching) {
         this.items.push(hearing);
       }
+      this.arrayEvents.push(this.picker);
       // alert if no results
       if (!searching.length) this.noHearings = true;
       // reset for another run
@@ -154,15 +155,9 @@ export default {
     // instantiate array to push items to
     items: [],
     // returning dates already picked
-    arrayEvents: [],
-    mounted () {
-      this.arrayEvents = [...Array(6)].map(() => {
-        const day = Math.floor(Math.random() * 30)
-        const d = new Date()
-        d.setDate(day)
-        return d.toISOString().substr(0, 10)
-      })
-    },
+    arrayEvents: null,
+    dates1: new Date().toISOString().substr(0.10),
+
     // boolean to toggle loading state
     loading: false,
     // search field for results table
@@ -170,6 +165,14 @@ export default {
     // boolean to toggle alert state
     noHearings: false
   }),
+    mounted () {
+    this.arrayEvents = [...Array(6)].map(() => {
+        const day = [40]
+        const d = new Date()
+        d.setDate(day)
+        return d.toISOString().substr(0, 10)
+      })
+    },
   computed:{
     theme(){
       // toggle for our fancy dark mode switch

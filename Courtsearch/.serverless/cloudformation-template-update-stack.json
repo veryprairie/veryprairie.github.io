@@ -162,7 +162,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/courtsearch/dev/1619971891956-2021-05-02T16:11:31.956Z/courtsearch.zip"
+          "S3Key": "serverless/courtsearch/dev/1619992527440-2021-05-02T21:55:27.440Z/courtsearch.zip"
         },
         "Handler": "handler.courtsearch",
         "Runtime": "nodejs14.x",
@@ -180,14 +180,14 @@
         "CourtsearchLogGroup"
       ]
     },
-    "CourtsearchLambdaVersionpUipr6YMfhAi2vdQLCprEfTAAIr1rtkklg06VKWc": {
+    "CourtsearchLambdaVersion2cIgJvGQk1VSEdofsoXeEyEFISkE4kPGZTvzxv5PLM": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "CourtsearchLambdaFunction"
         },
-        "CodeSha256": "Ht6thl/J5/QcDNY1SxGW66+CadrrESKI8Wg/AR8DMsw="
+        "CodeSha256": "FzIloRvZUUCXGkOA2bGrJOJ2+/SewrgErbzpVn2YSU4="
       }
     },
     "ApiGatewayRestApi": {
@@ -305,7 +305,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1619971887185": {
+    "ApiGatewayDeployment1619992517669": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -368,7 +368,7 @@
     "CourtsearchLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "CourtsearchLambdaVersionpUipr6YMfhAi2vdQLCprEfTAAIr1rtkklg06VKWc"
+        "Ref": "CourtsearchLambdaVersion2cIgJvGQk1VSEdofsoXeEyEFISkE4kPGZTvzxv5PLM"
       },
       "Export": {
         "Name": "sls-courtsearch-dev-CourtsearchLambdaFunctionQualifiedArn"
